@@ -1,0 +1,64 @@
+import java.util.HashMap;
+import java.util.Map;
+
+public class Sheet {
+
+    private final Map<String, String> cells = new HashMap<>();
+    private final Map<String, String> computedValues = new HashMap<>();
+    
+
+    public void set(String cellId, String value) {
+        cells.put(cellId, value);
+        computedValues.put(cellId,computeValue(value) );
+        
+    }
+
+    public void reset() {
+        cells.clear();
+         computedValues.clear();
+    }
+     private String computeValue(String value) {
+        
+                 if (value.startsWith("=")) {
+                  double result = 0;
+                  String expression = value.substring(1);
+                    
+                  String[] tokens = expression.split(" ");
+                 for (String token : tokens) {
+                if (!token.equals("+"))
+                {
+                    double num = Double.parseDouble(token);
+                    result += num;
+                }
+            
+                 }
+                return String.valueOf( result);
+                 
+                 }
+                else
+                return value;
+               
+              
+            
+        }
+
+    public void print() {
+        for (Map.Entry<String, String> entry : cells.entrySet()) {
+            String cellId = entry.getKey();
+            
+            System.out.println("Cell Id: " + cellId + " || Raw Value: " + entry.getValue() + 
+                               " || Computed Value: " + computedValues.get(cellId));
+        }
+    }
+
+   
+
+    public static void main(String[] args) {
+        Sheet sheet = new Sheet();
+        sheet.set("A1", "=7 + 6");
+        sheet.set("A2", "3");
+        sheet.print();
+        sheet.reset();
+        sheet.print();
+    }
+}
